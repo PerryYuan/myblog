@@ -1,0 +1,9 @@
+.setting-box{
+    margin-top: 100px;
+    overflow: hidden;
+}
+form{
+    max-width: 300px;
+    padding-top: 20px;
+    margin: 0 auto;
+}

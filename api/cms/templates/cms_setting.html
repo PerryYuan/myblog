@@ -1,0 +1,50 @@
+{% extends 'cms_base.html' %}
+{% load static %}
+{% block titleblock %}
+    个人设置
+{% endblock titleblock %}
+
+{% block headboxblock %}
+    <link rel="stylesheet" href="{% static 'css/cms_setting.css' %}">
+    <script src="{% static 'js/settings.js' %}"></script>
+{% endblock headboxblock %}
+
+{% block pagebodyblock %}
+    <div class="container-fluid setting-box">
+        <h1>个人设置</h1>
+        <form class="form-horizontal" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username" class="col-md-3 col-sm-3 control-label">用户名</label>
+                <div class="col-md-9 col-sm-9">
+                    <input type="text" class="form-control" name="username" id="username" placeholder="用户名" value="{{ user.username }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email" class="col-md-3 col-sm-3 control-label">邮箱</label>
+                <div class="col-md-7 col-sm-7">
+                    <input type="text" class="form-control" name="email" id="email" placeholder="邮箱" value="{{ user.email }}" readonly>
+                </div>
+                <div class="col-md-2 col-sm-2">
+                    <a class="btn btn-success" href="{% url 'cms_update_email' %}">修改邮箱</a>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="avatar" class="control-label col-md-3 col-sm-3">头像</label>
+                <div class="col-md-9 col-sm-9">
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar }}" alt="" id="avatar">
+                    {% else %}
+                        <img src="{% static 'images/default.jpg' %}" alt="" id="avatar">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 col-sm-3"></label>
+                <div class="col-md-9 col-sm-9">
+                    <button class="btn btn-primary btn-save" id="btn-save">保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

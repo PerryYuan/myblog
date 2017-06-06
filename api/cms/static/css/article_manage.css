@@ -1,0 +1,22 @@
+.row{
+    margin-top: 20px;
+}
+.table td{
+    text-align: center;
+}
+.table td:nth-of-type(1){
+    width: 40%;
+    text-align: left;
+}
+
+.table th{
+    text-align: center;
+}
+
+.table th:nth-of-type(1){
+    text-align: left;
+}
+
+.page-nav{
+    text-align: center;
+}

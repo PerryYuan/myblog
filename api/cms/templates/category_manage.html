@@ -1,0 +1,31 @@
+{% extends 'article_base_manage.html' %}
+{% load static %}
+{% block headboxblock %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/category_manage.css' %}">
+    <script src="{% static 'js/category_manage.js' %}"></script>
+{% endblock %}
+
+{% block pagemanageblock %}
+    <table class="table">
+        <thead>
+            <th>名称</th>
+            <th>文章数</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+            {% for category in categorys %}
+                <tr data-category-id="{{ category.id }}">
+                    <td>{{ category.name }}</td>
+                    <td>{{ category.article_num }}</td>
+                    <td>
+                        <a href="{% url 'cms_category_editer' %}" class="category-editer" >编辑</a> |
+                        <a href="{% url 'cms_category_delete' %}"class="category-delete" >删除</a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}
+

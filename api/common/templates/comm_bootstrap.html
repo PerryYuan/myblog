@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block titleblock%}{% endblock titleblock%}</title>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link href="{% static 'js/sweetalert/sweetalert.css' %}" rel="stylesheet">
+    <script src="{% static 'js/sweetalert/sweetalert.min.js' %}"></script>
+    <script src="{% static 'js/sweetalert/xtalert.js' %}"></script>
+    <script src="{% static 'js/xtparam.js' %}"></script>
+    <script src="https://cdn.staticfile.org/Plupload/2.1.1/moxie.js"></script>
+    <script src="https://cdn.staticfile.org/Plupload/2.1.1/plupload.dev.js"></script>
+    <script src="https://cdn.staticfile.org/qiniu-js-sdk/1.0.14-beta/qiniu.js"></script>
+    <script src="{% static 'js/xtqiniu.js' %}"></script>
+    <script src="{% static 'js/myajax.js' %}"></script>
+    <script src="{% static 'js/arttemplate.js' %}"></script>
+
+    {% block headblock %}{% endblock headblock %}
+</head>
+<body>
+    {% block bodyblock %}{% endblock bodyblock %}
+</body>
+</html>
