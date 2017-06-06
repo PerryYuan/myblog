@@ -88,9 +88,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'myblog',
         'USER':'root',
-        'PASSWORD':'010366',
-        'HOST':'127.0.0.1',
-        'PORT':'3306',
+        'PASSWORD':'',
+        'HOST':'',
+        'PORT':'',
     }
 }
 
@@ -147,10 +147,10 @@ STATIC_URL = '/static/'
 LOGIN_URL = '/cms/login/'
 
 
-EMAIL_HOST_PASSWORD = 'lquytgjyfnbegdgh'
-EMAIL_HOST_USER = '1083105725@qq.com'
-EMAIL_HOST = 'smtp.qq.com'
-EMAIL_PORT = '587'
+EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = ''
+EMAIL_HOST = ''
+EMAIL_PORT = ''
 EMAIL_USE_TLS = True
 
 import djcelery
