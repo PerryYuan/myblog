@@ -1,26 +1,23 @@
 # coding:utf8
-from django.shortcuts import render,redirect,reverse
+import qiniu
+from django.contrib.auth import login,authenticate,logout
+from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
+from django.db.models import Count
 from django.http import HttpResponse,JsonResponse
+from django.shortcuts import render,redirect,reverse
+from django.views.decorators.http import require_http_methods
+
+import config
+from api.common.tasks import sendmail
+from article.models import CategoryModel,ArticleModel,TagModel,TopModel
+from cmsauth.models import CMSUser
 from forms import LoginForm,UpdateProfileForm,UpdateEmailForm,\
     AddCategoryForm,AddTagForm,AddArticleForm,\
     UpdateArticleForm,DeleteArticleForm,TopArticleForm,\
     CategoryForm,CategoryEditerForm
-
-from django.contrib.auth import login,authenticate,logout
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
-from cmsauth.models import CMSUser
-from django.core.cache import cache
-from django.core import mail
-import hashlib
-import time
-import qiniu
-from article.models import CategoryModel,ArticleModel,TagModel,TopModel
 from mutils import phjson
-import config
-from django.db.models import Count
-from mutils.phemail import send_email
+
 
 @login_required
 def article_manage(request,page=1,category_id=0):
@@ -252,7 +249,7 @@ def update_email(request):
         form = UpdateEmailForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data.get('email')
-            if send_email(request,email,'cms_check_email'):
+            if sendmail.delay(request.scheme + '://' + request.get_host(),email,'cms_check_email'):
                 return redirect(reverse('cms_send_email_ok'))
             return redirect(reverse('cms_send_email_fail'))
         else:

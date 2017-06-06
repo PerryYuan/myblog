@@ -6,13 +6,14 @@ from django.shortcuts import redirect,reverse
 from django.core import mail
 from django.conf import settings
 
-def send_email(request,email,check_url,check_data=None,subject=None,message=None):
+def send_email(simple_url,email,check_url,check_data=None,subject=None,message=None):
     code = hashlib.md5(str(time.time()) + email).hexdigest()
     if check_data:
         cache.set(code, check_data, 120)
     else:
         cache.set(code, email, 120)
-    url = request.scheme + '://' + request.get_host() + reverse(check_url, kwargs={'code': code})
+    # url = request.scheme + '://' + request.get_host() + reverse(check_url, kwargs={'code': code})
+    url = simple_url + reverse(check_url, kwargs={'code': code})
     if not subject:
         subject = u'修改邮箱'
     if not message:

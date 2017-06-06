@@ -5,11 +5,12 @@
 		$(function() {
 			var secondTag = $('.second-down');
 			var secondCount = 10;
-			setInterval(function() {
+			var timer = setInterval(function() {
 				secondCount -= 1;
 				secondTag.html(secondCount);
 				if(secondCount <= 0){
-					window.location = '/cms/';
+                    clearInterval(timer);
+                    window.location = '/cms/';
 				}
 			},1000);
 		});
