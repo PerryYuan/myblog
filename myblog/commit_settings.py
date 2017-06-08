@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -87,10 +87,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'myblog',
-        'USER':'root',
-        'PASSWORD':'010366',
-        'HOST':'127.0.0.1',
-        'PORT':'3306',
+        'USER':'',
+        'PASSWORD':'',
+        'HOST':'',
+        'PORT':'',
     }
 }
 
@@ -147,10 +147,10 @@ STATIC_URL = '/static/'
 LOGIN_URL = '/cms/login/'
 
 
-EMAIL_HOST_PASSWORD = 'lquytgjyfnbegdgh'
-EMAIL_HOST_USER = '1083105725@qq.com'
-EMAIL_HOST = 'smtp.qq.com'
-EMAIL_PORT = '587'
+EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = ''
+EMAIL_HOST = ''
+EMAIL_PORT = ''
 EMAIL_USE_TLS = True
 
 import djcelery

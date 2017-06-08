@@ -1,5 +1,6 @@
 {% extends "comm_bootstrap.html" %}
 {% load static %}
+{% load article_filter %}
 
 {% block headblock %}
 	<link rel="stylesheet" href='{% static "css/front_base.css" %}'>
@@ -32,6 +33,7 @@
                 {% endif %}
           </ul>
           <form class="navbar-form navbar-right" action="{% url 'front_search' %}">
+              {% csrf_token %}
             <input type="text" class="form-control" name="query" placeholder="查找...">
           </form>
         </div>
@@ -44,7 +46,7 @@
           <ul class="nav nav-sidebar" id='category-box' data-category-id="{{ c_category_id }}">
             <li><a href="{% url 'front_index' %}">所有文章</a></li>
             {% for category in categorys %}
-            	<li data-category-id="{{category.id}}"><a href="{% url 'front_article_list' category_id=category.id page=1 %}">{{category.name}}</a></li>
+            	<li data-category-id="{{category|get_value:'id'}}"><a href="{% url 'front_article_list' category_id=category|get_value:'id' page=1 %}">{{category|get_value:'name'}}</a></li>
             {% endfor %}
           </ul>
         </div>

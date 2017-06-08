@@ -1,3 +1,3 @@
 # coding:utf8
 
-PAGE_NUM = 1
+PAGE_NUM = 5

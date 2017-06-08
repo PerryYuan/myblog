@@ -1,5 +1,6 @@
 {% extends 'front_base.html' %}
 {% load static %}
+{% load article_filter %}
 
 {% block headblock %}
     {{ block.super }}
@@ -21,17 +22,17 @@
 
 		<div class="row">
 			{% for article in top_articles %}
-				<div class="col-md-4 col-sm-4" class="top-article-box">
-					<div class="thumbnail">
-						<div class="thumbnail-box">
-                            <a href="{% url 'front_article_detail' article_id=article.uid %}"><img src="{{article.thumbnail}}" alt=""></a>
-						</div>
-						<div class="caption">
-                            <a href="{% url 'front_article_detail' article_id=article.uid %}"><h3>{{article.title}}</h3></a>
-							<p>{{article.desc}}</p>
-						</div>
-					</div>
-				</div>
+                    <div class="col-md-4 col-sm-4" class="top-article-box">
+                        <div class="thumbnail">
+                            <div class="thumbnail-box">
+                                <a href="{% url 'front_article_detail' article_id=article|get_value:'uid' %}"><img src="{{article|get_value:'thumbnail'}}" alt=""></a>
+                            </div>
+                            <div class="caption">
+                                <a href="{% url 'front_article_detail' article_id=article|get_value:'uid' %}"><h3>{{article|get_value:'title'}}</h3></a>
+                                <p>{{article|get_value:'desc'}}</p>
+                            </div>
+                        </div>
+                    </div>
 			{% endfor %}
 		</div>
 

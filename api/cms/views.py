@@ -17,12 +17,15 @@ from forms import LoginForm,UpdateProfileForm,UpdateEmailForm,\
     UpdateArticleForm,DeleteArticleForm,TopArticleForm,\
     CategoryForm,CategoryEditerForm
 from mutils import phjson
+from mutils.mredis.phredis import MyBlogRedis
+import json
 
 
 @login_required
 def article_manage(request,page=1,category_id=0):
     articles = None
     categorys = CategoryModel.objects.all()
+    #MyBlogRedis.category.push_all_category(categorys)
     category_id = int(category_id)
     print category_id
     if category_id > 0:
@@ -79,9 +82,6 @@ def add_article(request):
             desc = form.cleaned_data.get('desc')
             thumbnail = form.cleaned_data.get('thumbnail')
             tags = request.POST.getlist('tags[]')
-            print '-'*30
-            print tags
-            print '-'*30
             content = form.cleaned_data.get('content')
             categoryModel = CategoryModel.objects.get(pk=category)
             article = ArticleModel(title=title,
@@ -157,6 +157,7 @@ def add_category(request):
             return phjson.json_params_error(message=u'分类已存在，不需要再次添加')
         category = CategoryModel(name=name)
         category.save()
+        MyBlogRedis.category.add_category(category)
         return phjson.json_result(data={'id':category.id,'name':category.name})
     else:
         return phjson.json_params_error(message=form.get_error())
@@ -295,6 +296,7 @@ def delete_article(request):
         uid = form.cleaned_data.get('uid')
         article = ArticleModel.objects.get(pk=uid)
         if article:
+            MyBlogRedis.top_article.delete_top_article(article)
             article.delete()
             return phjson.json_result()
         else:
@@ -313,9 +315,9 @@ def top_article(request):
             if not top:
                 top = TopModel()
             top.save()
-
             article.top = top
             article.save(update_fields=['top'])
+            MyBlogRedis.top_article.add_top_article(article)
             return phjson.json_result()
         else:
             return phjson.json_params_error(u'该文章不存在')
@@ -333,6 +335,7 @@ def untop_article(request):
             if not top:
                 return phjson.json_params_error(u'该文章没有置顶')
             article.top.delete()
+            MyBlogRedis.top_article.delete_top_article(article)
             return phjson.json_result()
         else:
             return phjson.json_params_error(u'该文章不存在')
@@ -344,7 +347,6 @@ def untop_article(request):
 @require_http_methods(['GET'])
 def category_manage(request):
     categorys = CategoryModel.objects.all().annotate(article_num=Count('articlemodel'))
-    print categorys
     context = {
         'categorys':categorys
     }
@@ -358,9 +360,11 @@ def category_editer(request):
         id = form.cleaned_data.get('id')
         category = CategoryModel.objects.filter(pk=id).first()
         if category:
+            MyBlogRedis.category.delete_category(category)
             name = form.cleaned_data.get('name')
             category.name = name
             category.save(update_fields=['name'])
+            MyBlogRedis.category.add_category(category)
             return phjson.json_result()
         else:
             return phjson.json_params_error(u'该分类不存在')
@@ -376,6 +380,7 @@ def category_delete(request):
         category = CategoryModel.objects.filter(pk=id).first()
         if category:
             if category.articlemodel_set.count()<=0:
+                MyBlogRedis.category.delete_category(category)
                 category.delete()
                 return phjson.json_result()
             else:

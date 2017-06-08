@@ -9,15 +9,17 @@ from django.views.decorators.http import require_http_methods
 from forms import FrontRegistForm,FrontLoginForm,\
     FrontEmailForm,FrontResetPwd,AddCommentForm
 from django.core.cache import cache
-from mutils.phemail import send_email
+from api.common.tasks import sendmail
 from frontauth.models import FrontUserModel
 from frontauth.utils import login,logout
 from frontauth.decorators import front_login_require
 from django.db.models import Q
 from django.db.models import Count
+from mutils.mredis.phredis import MyBlogRedis,TopArticleRedis
+import json
 
 def article_list(request,category_id=0,page=1):
-    categorys = CategoryModel.objects.all()
+    categorys = MyBlogRedis.category.get_all()
     articles = ArticleModel.objects.all().order_by('-create_time')
     articles = articles.annotate(comment_num=Count('commentmodel'))
     page = int(page)
@@ -27,8 +29,8 @@ def article_list(request,category_id=0,page=1):
         articles = articles.filter(category__pk=category_id)
         articles = articles.values()
     else:
-        top_articles = articles.filter(top__isnull=False).order_by('-top__create_time')[:3]
-        articles = [article for article in articles.values() if article not in top_articles.values()]
+        top_articles = MyBlogRedis.top_article.get_all()
+        articles = [article for article in articles if TopArticleRedis.to_json(article) not in top_articles]
     start = (page-1)*PAGE_NUM
     end = start + PAGE_NUM
     articles = list(articles[start:end])
@@ -46,12 +48,18 @@ def article_list(request,category_id=0,page=1):
 
 def article_detail(request,article_id=''):
     if article_id:
+        print '-'*30
+        print article_id
+        print '-'*30
         article = ArticleModel.objects.filter(pk=article_id).first()
+        print '-=' * 30
+        print article
+        print '-=' * 30
         if article:
             comments = article.commentmodel_set.all()
             context = {
                 'article':article,
-                'categorys':CategoryModel.objects.all(),
+                'categorys':MyBlogRedis.category.get_all(),
                 'c_category_id':article.category.id,
                 'tags':article.tags.all(),
                 'comments':comments
@@ -106,7 +114,7 @@ def regist(request):
             }
             subject = u'注册我的博客'
             message = u'请点击以下链接确认注册我的博客 '
-            if send_email(request,email,'front_check_email',data,subject,message):
+            if sendmail.delay(request.scheme + '://' + request.get_host(),email,'front_check_email',data,subject,message):
                 return HttpResponse(u'邮箱发送成功')
             else:
                 return HttpResponse(u'邮箱发送失败')
@@ -136,7 +144,7 @@ def forget_password(request):
             email = form.cleaned_data.get('email')
             user = FrontUserModel.objects.filter(email=email).first()
             if user:
-                if send_email(request,email,'front_reset_password'):
+                if sendmail.delay(request.scheme + '://' + request.get_host(),email,'front_reset_password'):
                     return HttpResponse(u'邮箱发送成功')
                 else:
                     return HttpResponse(u'邮箱发送失败')
@@ -183,7 +191,7 @@ def front_comment(request):
 def search(request):
     query = request.GET.get('query')
     articles = ArticleModel.objects.filter(Q(title__icontains=query)|Q(content__icontains=query))
-    categorys = CategoryModel.objects.all()
+    categorys = MyBlogRedis.category.get_all()
     articles = articles.annotate(comment_num=Count('commentmodel'))
     context = {
         'articles':articles,
